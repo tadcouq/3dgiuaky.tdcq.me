@@ -18,7 +18,9 @@ const renderer = new THREE.WebGLRenderer({
 renderer.setPixelRatio(window.devicePixelRatio);
 renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.toneMappingExposure = 2.3;
-renderer.shadowMap.enabled = true;            // test thì để true
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.VSMShadowMap;
+document.body.appendChild( renderer.domElement );
 document.body.appendChild(renderer.domElement);
 
 //    - Camera orbit
@@ -41,21 +43,30 @@ controls.update();
 
 //   - Light
 // test thì để light nhẹ toàn bộ trước đã
-const ambientLight = new THREE.AmbientLight( 0x404040 , 20 );
+const ambientLight = new THREE.AmbientLight( 0x404040 , 2 );
 scene.add( ambientLight );
 
-const DirectionalLight = new THREE.DirectionalLight( 0xffffff, 5.00 );
-DirectionalLight.position.set( 3.524, 10.516, 10 );
+const DirectionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
+DirectionalLight.position.set( 500, 500, 500 );
+DirectionalLight.castShadow = true;
+DirectionalLight.shadow.camera.top = 1000;
+DirectionalLight.shadow.camera.bottom = - 1000;
+DirectionalLight.shadow.camera.left = - 1000;
+DirectionalLight.shadow.camera.right = 1000;
 scene.add( DirectionalLight );
+
+const hemispherelight = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.2 );
+scene.add( hemispherelight );
 
 //   - Mặt đất
 
 const ground = new THREE.Mesh(
-  new THREE.PlaneGeometry(500, 500),
-  new THREE.MeshStandardMaterial({ color: 0x808080 }) // màu xám
+  new THREE.PlaneGeometry(150, 150),
+  new THREE.MeshStandardMaterial({ color: 0x808080, side: THREE.DoubleSide }) // màu xám
 );
 ground.rotation.x = Math.PI / 2;
 ground.position.y = -0.5;
+ground.receiveShadow = true;
 scene.add(ground);
 
 // ** 3. Đối tượng trong không gian
@@ -78,6 +89,12 @@ loader.load(
     const model = gltf.scene;
     model.scale.set(1, 1, 1);
     model.position.set(0, 0, 0);
+    scene.traverse(function(child){
+      if(child.isMesh){
+          child.castShadow = true;
+          child.receiveShadow = true;
+      }
+    });
     scene.add(model);
   },
 
@@ -89,6 +106,17 @@ loader.load(
     console.error( 'maps: An error happened, check the code or the fuckin 3D again' );
   }
 );
+// Mặt trời
+
+const sungeometry = new THREE.SphereGeometry( 15, 32, 16 ); 
+const suntexture = new THREE.TextureLoader().load('./tex/sun.jpg');
+const sunmaterial = new THREE.MeshPhongMaterial( { map: suntexture } ); 
+const sun = new THREE.Mesh( sungeometry, sunmaterial ); 
+sun.position.set(500,500,500);
+sun.scale.set(5,5,5);
+scene.add( sun );
+
+
 
 // load xe vào, cho chạy animation loop khi hết, call 2 camera từ model này
 
@@ -116,7 +144,12 @@ car.load(
     gltf.cameras.forEach((cam, index) => {
       cameras[`xe_${index+1}`] = cam;
     });
-    
+    scene.traverse(function(child){
+      if(child.isMesh){
+          child.castShadow = true;
+          child.receiveShadow = true;
+      }
+    });
     scene.add(model);
   },
 
@@ -145,6 +178,12 @@ bullsign.load(
     model.position.set(-45.39, 26.95, 17.65);
     model.rotation.set(0.04, -1.5, -1.64);
     scene.add(model);
+    scene.traverse(function(child){
+      if(child.isMesh){
+          child.castShadow = true;
+          child.receiveShadow = true;
+      }
+    });
   },
 
   function (xhr) {
@@ -171,6 +210,12 @@ realPcLogo.load(
     model.scale.set(7, 7, 7);
     model.position.set(16.70, 26.63, 76.13);
     scene.add(model);
+    scene.traverse(function(child){
+      if(child.isMesh){
+          child.castShadow = true;
+          child.receiveShadow = true;
+      }
+    });
   },
 
   function (xhr) {
