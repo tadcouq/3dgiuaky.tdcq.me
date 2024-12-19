@@ -47,7 +47,7 @@ const ambientLight = new THREE.AmbientLight( 0x404040 , 2 );
 scene.add( ambientLight );
 
 const DirectionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
-DirectionalLight.position.set( 500, 500, 500 );
+DirectionalLight.position.set( 200, 200, 200 );
 DirectionalLight.castShadow = true;
 DirectionalLight.shadow.camera.top = 1000;
 DirectionalLight.shadow.camera.bottom = - 1000;
@@ -111,10 +111,10 @@ loader.load(
 
 const sungeometry = new THREE.SphereGeometry( 15, 32, 16 ); 
 const suntexture = new THREE.TextureLoader().load('./tex/sun.jpg');
-const sunmaterial = new THREE.MeshPhongMaterial( { map: suntexture } ); 
+const sunmaterial = new THREE.MeshBasicMaterial( { map: suntexture } ); 
 const sun = new THREE.Mesh( sungeometry, sunmaterial ); 
-sun.position.set(500,500,500);
-sun.scale.set(5,5,5);
+sun.position.set(220, 220, 220);
+sun.scale.set(3, 3, 3);
 scene.add( sun );
 
 
