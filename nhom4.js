@@ -43,11 +43,11 @@ controls.update();
 
 //   - Light
 // test thì để light nhẹ toàn bộ trước đã
-const ambientLight = new THREE.AmbientLight( 0x404040 , 2 );
+const ambientLight = new THREE.AmbientLight( 0x404040 , 0.1 );
 scene.add( ambientLight );
 
-const DirectionalLight = new THREE.DirectionalLight( 0xffffff, 2 );
-DirectionalLight.position.set( 500, 500, 500 );
+const DirectionalLight = new THREE.DirectionalLight( 0xffcc33, 1.3 );
+DirectionalLight.position.set( 64.06, 36.08, 130.179 );
 DirectionalLight.castShadow = true;
 DirectionalLight.shadow.camera.top = 1000;
 DirectionalLight.shadow.camera.bottom = - 1000;
@@ -196,8 +196,6 @@ bullsign.load(
   }
 );
 
-// skibidi pc
-
 const realPcLogo = new GLTFLoader(manager);
 const realPcLogoDracoLoader = new DRACOLoader();
 realPcLogoDracoLoader.setDecoderPath('/examples/js/libs/draco/');
@@ -236,10 +234,8 @@ const cameras = {
 
 let currentCamera = camera;
 
-// Ngày đêm (tạm thời bỏ, lag quá)
-//let isDay = true;
 const dground = new THREE.CubeTextureLoader()
-  .setPath('./tex/Day_skybox/')
+  .setPath('./tex/')
   .load([
     'px.png',
     'nx.png',
@@ -249,6 +245,71 @@ const dground = new THREE.CubeTextureLoader()
     'nz.png'
   ]);
 scene.background = dground; // temp 
+
+function switchCamera(newCamera) {
+  if (currentCamera !== newCamera) {
+      // Move listener to new camera
+      newCamera.add(listener);
+      currentCamera = newCamera;
+  }
+}
+
+let isMuted = false;
+let audioInitialized = false;
+const sounds = [];
+
+
+function initAudio() {
+    if (audioInitialized) return;
+    
+    const listener = new THREE.AudioListener();
+    currentCamera.add(listener);
+    
+    const sound = new THREE.Audio(listener);
+    const sound2 = new THREE.Audio(listener);
+    const sound3 = new THREE.Audio(listener);
+    const audioLoader = new THREE.AudioLoader();
+    
+    audioLoader.load('./audio/wind.mp3', function(buffer) {
+        sound.setBuffer(buffer);
+        sound.setLoop(true);
+        sound.setVolume(0.3);
+        sound.play();
+        sounds.push(sound);
+    });
+
+    audioLoader.load('./audio/Drunken_Sailor.mp3', function(buffer) {
+        sound2.setBuffer(buffer);
+        sound2.setLoop(true);
+        sound2.setVolume(0.5);
+        sound2.play();
+        sounds.push(sound2);
+    });
+
+    audioLoader.load('./audio/V6 Hybrid Engines.mp3', function(buffer) {
+        sound3.setBuffer(buffer);
+        sound3.setLoop(true);
+        sound3.setVolume(0.2);
+        sound3.play();
+        sounds.push(sound3);
+    });
+
+    audioInitialized = true;
+}
+
+function toggleAudio() {
+    isMuted = !isMuted;
+    sounds.forEach(sound => {
+        if (sound && sound.isPlaying) {
+            sound.setVolume(isMuted ? 0 : 0.5);
+        }
+    });
+    document.querySelector('.audioButton').textContent = isMuted ? 'Audio Off' : 'Audio On';
+}
+
+window.addEventListener('click', function() {
+    initAudio();
+}, { once: true });
 
 // switch camera
 document.getElementById('cameraSelect').addEventListener('change', (event) => {
