@@ -255,10 +255,8 @@ function switchCamera(newCamera) {
 }
 
 // audio
-let isMuted = false;
 let audioInitialized = false;
 const sounds = [];
-
 
 function initAudio() {
     if (audioInitialized) return;
@@ -298,16 +296,7 @@ function initAudio() {
     audioInitialized = true;
 }
 
-function toggleAudio() {
-    isMuted = !isMuted;
-    sounds.forEach(sound => {
-        if (sound && sound.isPlaying) {
-            sound.setVolume(isMuted ? 0 : 0.5);
-        }
-    });
-    document.querySelector('.audioButton').textContent = isMuted ? 'Audio Off' : 'Audio On';
-}
-
+//   event listener để mồi chrome cho phép chạy audio
 window.addEventListener('click', function() {
     initAudio();
 }, { once: true });
