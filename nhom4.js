@@ -55,6 +55,11 @@ DirectionalLight.shadow.camera.left = - 1000;
 DirectionalLight.shadow.camera.right = 1000;
 scene.add( DirectionalLight );
 
+const Moonlight = new THREE.DirectionalLight( 0x202020, 0.3 );
+Moonlight.position.set( -190, -20, -190 );
+Moonlight.castShadow = true;
+scene.add( Moonlight );
+
 const hemispherelight = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.2 );
 scene.add( hemispherelight );
 
@@ -113,11 +118,19 @@ const sungeometry = new THREE.SphereGeometry( 15, 32, 16 );
 const suntexture = new THREE.TextureLoader().load('./tex/sun.jpg');
 const sunmaterial = new THREE.MeshBasicMaterial( { map: suntexture } ); 
 const sun = new THREE.Mesh( sungeometry, sunmaterial ); 
-sun.position.set(220, 220, 220);
-sun.scale.set(3, 3, 3);
+sun.position.set(220, 50, 220);
+sun.scale.set(1, 1, 1);
 scene.add( sun );
 
+// Mặt trăng
 
+const moongeometry = new THREE.SphereGeometry( 15, 32, 16);
+const moontexture = new THREE.TextureLoader().load('./tex/moon.jpg');
+const moonmaterial = new THREE.MeshBasicMaterial( {map: moontexture} );
+const moon = new THREE.Mesh( moongeometry, moonmaterial);
+moon.position.set(-190, -20, -190);
+moon.scale.set(0.3,0.3,0.3);
+scene.add(moon);
 
 // load xe vào, cho chạy animation loop khi hết, call 2 camera từ model này
 
